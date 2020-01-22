@@ -1,3 +1,3 @@
-# DataScience x Logistic Regression,
+# DataScience x Logistic Regression
 
 School project @42
