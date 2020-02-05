@@ -2,17 +2,31 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import sys
+import math
 
 def decision_boundary(prob):
   return 1 if prob >= .5 else 0
 
-# def cost_function(x, y )
+# def cost_function(x, y, thetas )
+
+
+def hypothesis_function(X, thetas):
+    # print(X.shape)
+    # print(thetas.shape)
+    return (1 / (1 + np.exp(np.dot(X, thetas))))
+    
+def cost_function(X):
+    len_ = len(X)
+    return ()
 
 def logistic_regression(X, Y):
-    theta = 0
-    for x in X:
-        
-    
+    thetas = np.zeros(X.shape[1])
+    learning_rate = 0.000015
+    m = len(X)
+    for i in range(6000):
+        hypothesis_function(X, thetas)
+        thetas = thetas - learning_rate * (1 / m ) * (hypothesis_function(X, thetas) - y) @ X
+    return thetas
 
 def houses(df):
     Houses = []
@@ -29,8 +43,11 @@ if __name__ == "__main__":
     X = dataset[dataset.columns[6:]]
     X = X.fillna(X.mean())
     X = np.array(X)
+    X0 = np.ones((X.shape[0], 1))
+    Xnew = np.hstack((X,X0))
     Y = houses(dataset[dataset.columns[0]])
     
     thetas = []
     for y in Y:
-        thetas.append(logistic_regression(X, y))    
+        thetas.append(logistic_regression(Xnew, y))
+    print(thetas)
