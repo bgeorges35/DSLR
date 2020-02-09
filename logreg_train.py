@@ -2,19 +2,14 @@ import pandas as pd
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
-import sklearn.model_selection as skl
 from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 def writeCSV(df):
     df.to_csv('theta.csv')
 
-def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
-
-def accuracy(df, thetas):
-    X, Y = preprocessing_data(df)
-    prob = 0
-    result = 0
+def prediction(df, thetas):
+    X = preprocessing_data(df)
     y = []
     for x in X:
         tmp_prob = 0
@@ -25,25 +20,36 @@ def accuracy(df, thetas):
                 tmp_prob = prob
                 result = i
         y.append(result)
-    return(y)
-        
+    return y
+
+def Accuracy(df, thetas):
+    predict = prediction(df, thetas)
+    Y_test = df[df.columns[0]]
+    Y_test = Y_test.replace({'Gryffindor': 0, 'Slytherin': 1, 'Ravenclaw': 2, 'Hufflepuff': 3})
+    Y_test = np.array(Y_test)
+    
+    error = np.sum(Y_test == predict)
+    Accuracy = error / len(Y_test) * 100
+    print("Accuracy:", Accuracy, "%")
+
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
 def cost_function(y, h, m):
-    a = (- 1 / m) * (np.dot(y, np.log(h)) + (np.dot((1 - y), np.log(1 - h))))
-    return a
+    return (- 1 / m) * (np.dot(y, np.log(h)) + (np.dot((1 - y), np.log(1 - h))))
 
 def plot_cost_function(cost):
     axes = plt.axes()
     axes.grid()
-    x = np.arange(len(cost))
     plt.plot(cost)
     plt.show()
 
 def logistic_regression(X, Y):
     thetas = np.zeros(X.shape[1])
-    learning_rate = 2
+    learning_rate = 1.1
     m = len(X)
     cost = []
-    for i in range(10000):
+    for i in tqdm(range(6000)):
         z = np.dot(X, thetas)
         h = sigmoid(z)
         cost.append(cost_function(Y, h, m))
@@ -64,40 +70,25 @@ def houses(df):
 def preprocessing_data(df):
     X = df[df.columns[6:]]
     X = X.fillna(X.mean())
-    X = np.array(X)
     X_once = np.ones((X.shape[0], 1))
     Xnew = np.hstack((X,X_once))
-    Y = houses(df[df.columns[0]])
-    
     scaler = StandardScaler()
     scaler.fit(Xnew)
-    Xnew = scaler.transform(Xnew)
-    
-    return Xnew, Y
+    return scaler.transform(Xnew)
 
-
-if __name__ == "__main__":
-    dataset = pd.read_csv(sys.argv[1], index_col = 'Index')
-    
-    train, test =  skl.train_test_split(dataset, test_size=0.2, random_state=0)
-    
-    X, Y = preprocessing_data(train)
-    
+def find_thetas(X, Y):
     thetas = []
     for y in Y:
         thetas.append(logistic_regression(X, y))
+    return thetas
+
+if __name__ == "__main__":
+    dataset = pd.read_csv(sys.argv[1], index_col = 'Index')
+    #train, test =  skl.train_test_split(dataset, test_size=0.25, random_state=0)
     
-    predict = accuracy(test, thetas)
+    X = preprocessing_data(dataset)
     
-    Y_test = test[test.columns[0]]
-    Y_test = Y_test.replace({'Gryffindor': 0, 'Slytherin': 1, 'Ravenclaw': 2, 'Hufflepuff': 3})
-    Y_test = np.array(Y_test)
+    thetas = find_thetas(X, houses(dataset[dataset.columns[0]]))
     
-    #Code degueu fait par Javigner !
-    error = 0
-    for i in np.arange(len(Y_test)):
-        if (Y_test[i] != predict[i]):
-            error += 1
-    Accuracy = 100 - (error / len(Y_test) * 100)
-    print(Accuracy)
+    Accuracy(dataset, thetas)
     writeCSV(pd.DataFrame(thetas))
