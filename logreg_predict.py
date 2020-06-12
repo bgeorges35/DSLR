@@ -4,7 +4,7 @@ import sys
 from sklearn.preprocessing import StandardScaler
 
 def writeCSV(df):
-    df.to_csv('houses.csv')
+    df.to_csv('ressources/houses.csv')
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
