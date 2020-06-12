@@ -26,3 +26,6 @@ pip3 install -r requirements.txt
 python describe.py ressources/dataset_train.csv
 python pair_plot.py ressources/dataset_train.csv
 ```
+
+## Pair plot
+![Image of pair plot](https://github.com/bgeorges35/DSLR/blob/master/Figure_2.png)
