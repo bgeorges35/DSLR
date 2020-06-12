@@ -49,4 +49,8 @@ max    104956.000000  1016.211940  ...  -225.428140   279.070000
 
 ![Image of pair plot](https://github.com/bgeorges35/DSLR/blob/master/pair_plot.png)
 
+```python pair_plot.py ressources/dataset_train.csv```
+
+![Image of pair plot](https://github.com/bgeorges35/DSLR/blob/master/scatter_plot.png)
+
 
